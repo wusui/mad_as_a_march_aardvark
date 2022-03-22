@@ -61,7 +61,7 @@ def find_abbrev(soup, tmname):
                 return side.text
     return "-"
 
-def get_team_info1():
+def get_team_info():
     """
     Read the Espn website and convert the data to a dictionary indexed
     by team position number (position in the bracket)
@@ -92,32 +92,6 @@ def get_team_info1():
             "wins": find_wins(soup, tmname)
         }
     return team_ids
-
-def get_team_info():
-    """
-    Wrapper that keeps the interface the same if we get rid of fill_out_round_2
-    and call get_team_info1 directly (renaming it get_team_info)
-    """
-    return fill_out_round_2(get_team_info1())
-
-def fill_out_round_2(team_info):
-    """
-    Filter that insures that at least the sweet sixteen is reached during
-    the first round.  Used for testing during initial development.  So far,
-    this has been kept because it does not change things later, and future
-    users may want to run this program a couple of days early to make sure
-    everything works
-    """
-    mod_list = []
-    for numb in range(0, 64):
-        dnumb = numb + 1
-        indx = f"{dnumb:02d}"
-        if team_info[indx]['wins'] == 1 and not team_info[indx]['out']:
-            mod_list.append(indx)
-    for tindx in range(0, len(mod_list), 2):
-        team_info[mod_list[tindx]]['wins'] = 2
-        team_info[mod_list[tindx + 1]]['out'] = True
-    return team_info
 
 if __name__ == "__main__":
     print(get_team_info())

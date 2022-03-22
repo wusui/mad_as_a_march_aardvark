@@ -45,22 +45,19 @@ def gen_future_outcomes():
 
 def gen_panswers(gms_left):
     """
-    Read picks.txt and parse out into a dictionary indexed by individual
+    Read picks.json and parse out into a dictionary indexed by individual
     brackets.  Each entry is a list of picks (by team number) for the
     remaining games.
 
     @param gms_left integer number of total games left in the tournament
     @return dictionary list of relevant picks left, indexed by entrant
     """
-    picks_txt = os.sep.join([TOURNEY, "picks.txt"])
-    with open(picks_txt, "r", encoding="utf-8") as ofile:
-        picdata = ofile.read()
-    step1 = picdata.strip().split("\n")
-    panswers = {}
-    for pline in step1:
-        pandp = pline.split(":")
-        panswers[pandp[0]] = pandp[1].split("|")[-gms_left:]
-    return panswers
+    picks_json = os.sep.join([TOURNEY, "picks.json"])
+    with open(picks_json, 'r', encoding='utf-8') as ofile:
+        pick_data = json.load(ofile)
+    for pline in pick_data:
+        pick_data[pline] = pick_data[pline][-gms_left:]
+    return pick_data
 
 def gen_comparisons():
     """

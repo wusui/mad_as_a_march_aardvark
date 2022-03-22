@@ -6,6 +6,7 @@ Reduce the pick data into the number of wins for each team selected by an
 individual entrant
 """
 import os
+import json
 from get_scores import get_team_info
 from collect_entries import TOURNEY
 
@@ -28,22 +29,19 @@ def count_wins(teams):
 
 def score_group():
     """
-    Read the picks.txt file and return a dictionary index by group entrant
+    Read the picks.json file and return a dictionary index by group entrant
     whose values are dictionaries.
 
     @return dictionary each entry in this dictionary is a dictionary of pick
             information (team 01 was picked twice, team 02 was picked 0 times,
             team 03 was picked once...)
     """
-    picks_txt = os.sep.join([TOURNEY, "picks.txt"])
-    with open(picks_txt, "r", encoding="utf-8") as ofile:
-        picdata = ofile.read()
-    indv_data = picdata.strip().split("\n")
+    picks_json = os.sep.join([TOURNEY, "picks.json"])
+    with open(picks_json, 'r', encoding='utf-8') as ofile:
+        indata = json.load(ofile)
     retv = {}
-    for entry in indv_data:
-        parts = entry.split(":")
-        teams = parts[1].split("|")
-        retv[parts[0]] = count_wins(teams)
+    for entry in indata:
+        retv[entry] = count_wins(indata[entry])
     return retv
 
 def calc_scores():

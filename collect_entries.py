@@ -3,11 +3,12 @@
 # This code is licensed under the MIT license (see LICENSE.txt for details)
 """
 Main section of code that follows website links and extracts the pick data.
-Pick data is saved in picks.txt
+Pick data is saved in picks.json
 """
 import os
 import re
 import time
+import json
 from datetime import datetime
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
@@ -91,9 +92,9 @@ def save_bracket_files(driver, root_site, answer):
 def extract_pick_data():
     """
     Collect pick data from saved files and compress that information into
-    the picks.txt file
+    the picks.json file
     """
-    out_list = []
+    pick_dict = {}
     for entry in os.listdir(TOURNEY):
         if not entry.startswith('un1q___'):
             continue
@@ -106,14 +107,12 @@ def extract_pick_data():
                     tname = rline.split(TRAILER)[0].strip()
                 if rline.startswith("espn.fantasy.maxpart.config.pickString"):
                     answer = rline.split("=")[-1].strip()[0:-2][1:]
-                    if len(answer) > 120:
-                        out_line = ":".join([tname, answer])
-                        print(out_line)
-                        out_list.append(out_line)
+                    if len(answer) > 100:
+                        pick_dict[tname] = answer.split("|")
                     break
-    picks_txt = os.sep.join([TOURNEY, "picks.txt"])
-    with open(picks_txt, "w", encoding="utf-8") as fresults:
-        fresults.write("\n".join(out_list) + "\n")
+    picks_json = os.sep.join([TOURNEY, "picks.json"])
+    with open(picks_json, 'w', encoding='utf-8') as pfile:
+        json.dump(pick_dict, pfile, ensure_ascii=False)
 
 def extract_players():
     """
