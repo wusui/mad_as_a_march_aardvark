@@ -7,12 +7,12 @@ Generate an html page (the whole purose of this exercise)
 import os
 import json
 from configparser import ConfigParser
-from get_scores import get_team_info
+from real_world import RealWorld
 from collect_entries import TOURNEY
 
 def get_table_labels(tm_info):
     """
-    @param tm_info dictionary data from get_team_info
+    @param tm_info dictionary data from real_team_info
     @return string of html data filling in the header of the table
     """
     wmax = 0
@@ -37,7 +37,7 @@ def add_table_sq(entry, tm_info):
     Fill in a cell in the next game section of the table
 
     @param dict entry this cell's data
-    @param dict tm_info team info from get_team_info
+    @param dict tm_info team info from real_team_info
     @return String html for this cell
     """
     if len(entry) == 1:
@@ -85,7 +85,7 @@ def get_table_body(user_data, tm_info):
     Wrapper to generate the table displayed
 
     @param user_data dictionary extracted from leaders.json
-    @param tm_info dictionary from get_team_info so that numbers
+    @param tm_info dictionary from real_team_info so that numbers
            can be replaced by team names or abbreviations
 
     @return string of html code filling in the body of the table
@@ -94,7 +94,7 @@ def get_table_body(user_data, tm_info):
     for name in user_data:
         ostr += "<tr><td>" + name + "</td><td>"
         ostr += str(user_data[name]['wins']) + "</td><td>"
-        pvalue = user_data[name]["pct"] / 32768.0
+        pvalue = user_data[name]["pct"]
         ostr += f'{pvalue:10.5f}' + "</td>"
         for entry in user_data[name]['next_round']:
             ostr += add_table_sq(entry, tm_info)
@@ -110,7 +110,8 @@ def generate_display():
     leaders = os.sep.join([TOURNEY, "leaders.json"])
     with open(leaders, 'r', encoding='utf-8') as ofile:
         user_data = json.load(ofile)
-    tm_info = get_team_info()
+    rwobj = RealWorld()
+    tm_info = rwobj.real_team_info
     with open("header.txt", 'r', encoding="utf-8") as hfile:
         header = hfile.read()
     table_labels = get_table_labels(tm_info)

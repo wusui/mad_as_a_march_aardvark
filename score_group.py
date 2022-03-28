@@ -7,7 +7,7 @@ individual entrant
 """
 import os
 import json
-from get_scores import get_team_info
+from real_world import RealWorld
 from collect_entries import TOURNEY
 
 def count_wins(teams):
@@ -52,7 +52,8 @@ def calc_scores():
     @return dictionary points for each entrant
     """
     user_info = score_group()
-    real_info = get_team_info()
+    rwobj = RealWorld()
+    real_info = rwobj.real_team_info
     score_table = [0, 10, 30, 70, 150, 310, 630]
     udata = {}
     for user in user_info.items():

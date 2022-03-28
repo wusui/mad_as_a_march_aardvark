@@ -7,7 +7,7 @@ Collect data for winning entries for every possible future outcome
 import os
 import itertools
 import json
-from get_scores import get_team_info
+from real_world import RealWorld
 from score_group import calc_scores
 from collect_entries import TOURNEY
 
@@ -22,7 +22,8 @@ def gen_future_outcomes():
     """
     anslst = []
     ret_list = []
-    data_so_far = get_team_info()
+    rwobj = RealWorld()
+    data_so_far = rwobj.real_team_info
     for numb in range(0, 64):
         dnumb = numb + 1
         indx = f"{dnumb:02d}"
@@ -128,12 +129,18 @@ def consolidate(pctwinsnum, big_comp):
             a winning entry has this team
     """
     sbracket = {}
+    bsum = 0.0
     for person in pctwinsnum:
-        if pctwinsnum[person] == 0:
+        if pctwinsnum[person] < .01:
             break
+        sbracket[person] = {}
         print(person, pctwinsnum[person], len(big_comp[person]))
-        sbracket[person] = {"wins": len(big_comp[person]),
-                            "pct": pctwinsnum[person]}
+        sbracket[person]["wins"] = int(pctwinsnum[person] + .5)
+        bsum += pctwinsnum[person]
+    for person in pctwinsnum:
+        if pctwinsnum[person] < .01:
+            break
+        sbracket[person]["pct"] = pctwinsnum[person] / bsum
     for indx, person in sbracket.items():
         rsize = (len(big_comp[indx][0])+ 1) // 2
         gresults = [{} for _ in range(rsize)]
